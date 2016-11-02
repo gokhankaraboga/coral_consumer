@@ -45,58 +45,61 @@
 <div class="row">
     <div class="col-xs-6 col-md-3"></div>
     <div class="col-xs-6 col-md-6">
-        <div class="main_area" style="background-color: rgba(255,255,255,0.5);">
-            <table>
-                <tr>
-                    <form class="my_form">
+        <div class="main_area"
+             style="background-color: rgba(255,255,255,0.5);">
+            <form class="my_form" style="margin-top: 15px;" method="POST"
+                  action="{% url 'deneme' %}">
+                {% csrf_token %}
+
+                <table>
+                    <tr>
+
                         <font color="#246"> Please Enter Your
                             Destination</font><br>
-                        <select style="width: 100%; margin-bottom: 15px;">
-                            <option>London</option>
-                            <option>Istanbul</option>
-                            <option>Berlin</option>
+                        <select name=destinations style="width: 100%; margin-bottom: 15px;">
+                            <option value="London">London</option>
+                            <option value="Istanbul">Istanbul</option>
+                            <option value="Berlin">Berlin</option>
                         </select>
-                    </form>
-                </tr>
 
+                    </tr>
 
-                <tr>
-                    <td style="padding:0 158px 0 0;">
-                        <form>
+                    <tr>
+                        <td style="padding:0 180px 0 0;">
+
                             <font color="#246" style="margin-left: 80px;">
                                 Check-in Date</font><br>
                             <input type="date" name="checkin"
                                    style="width: 133%; height: 39px; border-radius: 5px">
-                        </form>
-                    </td>
-                    <td>
-                        <form>
+
+                        </td>
+                        <td>
+
                             <font color="#246" style="margin-left: 53px;">
                                 Check-out Date</font><br>
                             <input type="date" name="checkout"
-                                   style="width: 143%; height: 39px; border-radius: 5px">
-                        </form>
-                    </td>
-                </tr>
-            </table>
+                                   style="width: 133%; height: 39px; border-radius: 5px">
+
+                        </td>
+                    </tr>
+                </table>
 
 
-            <form class="my_form" style="margin-top: 15px;">
                 <font color="#246"> Number of passangers(pax)</font><br>
-                <select style="width: 20%;">
+                <select style="width: 26%; margin-left: 1px;">
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
                     <option>4</option>
                     <option>5</option>
                 </select>
+
+                <button type="submit" id="seacrh"
+                        class="btn btn-lg btn-info my_btn"
+                        style="margin-right:22%; width: 30%;">
+                    Search
+                </button>
             </form>
-
-
-            <button type="button" class="btn btn-lg btn-info my_btn"
-                    style="margin-right:24%; width: 30%;">Search
-            </button>
-
         </div>
 
 

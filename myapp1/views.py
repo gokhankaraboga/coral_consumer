@@ -8,6 +8,16 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def homepage(request):
-    return render_to_response('homepage.html')
+    return render(request, 'homepage.html')
 
 
+@login_required()
+def deneme(request):
+
+    if request.method == "POST":
+        variable = request.POST["destinations"]
+        return HttpResponse(variable)
+    else:
+        print 'Olmadi'
+
+    return render_to_response('deneme.html')
