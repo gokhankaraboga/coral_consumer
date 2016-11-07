@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'django_project1.urls'
+ROOT_URLCONF = 'project2_consumer_interface.urls'
 
 TEMPLATES = [
     {
@@ -66,7 +66,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_project1.wsgi.application'
+WSGI_APPLICATION = 'project2_consumer_interface.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'django_project1.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_project1',
+        'NAME': 'project2_consumer_interface',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': 'localhost',

@@ -11,6 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_project1.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE",
+                      "project2_consumer_interface.settings")
 
 application = get_wsgi_application()
