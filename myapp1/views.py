@@ -46,5 +46,4 @@ def deneme(request):
     else:
         print 'Olmadi'
 
-    return render(request, 'deneme.html', deneme_dict
-                  )
+    return render(request, 'deneme.html', deneme_dict)

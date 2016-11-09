@@ -2,7 +2,5 @@ from django.contrib import admin
 
 from . import models
 
-admin.site.register(models.Student)
-
-
-# Register your models here.
+admin.site.register(models.Destination)
+admin.site.register(models.Hotel)
