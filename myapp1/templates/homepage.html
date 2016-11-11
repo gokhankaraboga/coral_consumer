@@ -1,113 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Homepage</title>
+{% extends "layout.html" %}
 
-    {% load static %}
+{% block title %}<title> Homepage </title>{% endblock %}
 
+{% block content %}
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-          crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-          crossorigin="anonymous">
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/hey.css' %}">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
-
-
-</head>
-
-
-<body>
-
-
-<div class="row">
-    <div class="col-xs-6 col-md-4"></div>
-    <div class="col-xs-6 col-md-4"></div>
-    <div class="col-xs-6 col-md-4">
-        <button type="button" class="btn btn-lg btn-info my_btn">My Bookings
-        </button>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-6 col-md-3"></div>
-    <div class="col-xs-6 col-md-6">
-        <div class="main_area"
-             style="background-color: rgba(255,255,255,0.5);">
-            <form class="my_form" style="margin-top: 15px;" method="POST"
-                  action="{% url 'deneme' %}">
-                {% csrf_token %}
-
-                <table>
-                    <tr>
-
-                        <font color="#246"> Please Enter Your
-                            Destination</font><br>
-                        <select name=destinations
-                                style="width: 100%; margin-bottom: 15px;">
-                            <option value="London">London</option>
-                            <option value="Istanbul">Istanbul</option>
-                            <option value="Berlin">Berlin</option>
-                        </select>
-
-                    </tr>
-
-                    <tr>
-                        <td style="padding:0 180px 0 0;">
-
-                            <font color="#246" style="margin-left: 80px;">
-                                Check-in Date</font><br>
-                            <input type="date" name="checkin"
-                                   style="width: 133%; height: 39px; border-radius: 5px">
-
-                        </td>
-                        <td>
-
-                            <font color="#246" style="margin-left: 53px;">
-                                Check-out Date</font><br>
-                            <input type="date" name="checkout"
-                                   style="width: 133%; height: 39px; border-radius: 5px">
-
-                        </td>
-                    </tr>
-                </table>
-
-
-                <font color="#246"> Number of passangers(pax)</font><br>
-                <select style="width: 26%; margin-left: 1px;" name="pax">
-                    <option value='1'>1</option>
-                    <option value='2'>2</option>
-                    <option value='3'>3</option>
-                    <option value='4'>4</option>
-                    <option value='5'>5</option>
-                </select>
-
-                <button type="submit" id="seacrh"
-                        class="btn btn-lg btn-info my_btn"
-                        style="margin-right:22%; width: 30%;">
-                    Search
-                </button>
-            </form>
+    <div class="row">
+        <div class="col-xs-6 col-md-4"></div>
+        <div class="col-xs-6 col-md-4"></div>
+        <div class="col-xs-6 col-md-4">
+            <button type="button" class="btn btn-lg btn-info my_btn">My
+                Bookings
+            </button>
         </div>
-
-
     </div>
-    <div class="col-xs-6 col-md-3"></div>
-</div>
+
+    <div class="row">
+        <div class="col-xs-6 col-md-3"></div>
+        <div class="col-xs-6 col-md-6">
+            <div class="main_area"
+                 style="background-color: rgba(255,255,255,0.5);">
+                <form class="my_form" style="margin-top: 15px;" method="POST"
+                      action="{% url 'deneme' %}">
+                    {% csrf_token %}
+
+                    <table>
+                        <tr>
+
+                            <font color="#246"> Please Enter Your
+                                Destination</font><br>
+                            <select name=destinations
+                                    style="width: 100%; margin-bottom: 15px;">
+                                {% for item in destination %}
+                                    <option value="{{ item }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </tr>
+
+                        <tr>
+                            <td style="padding:0 180px 0 0;">
+
+                                <font color="#246" style="margin-left: 80px;">
+                                    Check-in Date</font><br>
+                                <input type="date" name="checkin"
+                                       style="width: 133%; height: 39px; border-radius: 5px">
+
+                            </td>
+                            <td>
+
+                                <font color="#246" style="margin-left: 53px;">
+                                    Check-out Date</font><br>
+                                <input type="date" name="checkout"
+                                       style="width: 133%; height: 39px; border-radius: 5px">
+
+                            </td>
+                        </tr>
+                    </table>
 
 
-</body>
-</html>
+                    <font color="#246"> Number of passangers(pax)</font><br>
+                    <select style="width: 26%; margin-left: 1px;" name="pax">
+                        <option value='1'>1</option>
+                        <option value='2'>2</option>
+                        <option value='3'>3</option>
+                        <option value='4'>4</option>
+                        <option value='5'>5</option>
+                    </select>
+
+                    <button type="submit" id="seacrh"
+                            class="btn btn-lg btn-info my_btn"
+                            style="margin-right:22%; width: 30%;">
+                        Search
+                    </button>
+                </form>
+            </div>
+
+
+        </div>
+        <div class="col-xs-6 col-md-3"></div>
+    </div>
+{% endblock %}

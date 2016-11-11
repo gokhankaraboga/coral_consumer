@@ -1,15 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Hey</h1>
-<p>{{ destinations }}</p>
-<p>{{ checkin }}</p>
-<p>{{ checkout }}</p>
-<p>{{ pax }}</p>
-<p>{{ product_list }}</p>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}<title> Hotels Page </title>{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+    <style>
+        body {
+            background: url({% static 'image/weather.png' %}) !important;
+        }
+
+    </style>
+
+    <center><h1>Hey</h1></center>
+    <p>{{ destinations }}</p>
+    <p>{{ checkin }}</p>
+    <p>{{ checkout }}</p>
+    <p>{{ pax }}</p>
+    {% for item1,item2 in zipped_list %}
+        <li>{{ item1 }}----{{ item2 }}</li>
+    {% endfor %}
+{% endblock %}

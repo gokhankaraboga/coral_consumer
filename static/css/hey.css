@@ -1,3 +1,8 @@
+body {
+    background: url(../image/holiday.jpg) no-repeat;
+    background-size: cover;
+}
+
 .my_btn {
     right: 2px;
     margin-top: 20px;
