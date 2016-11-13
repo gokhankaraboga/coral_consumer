@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}<title> Hotels Page </title>{% endblock %}
+
+{% load static %}
+
+{% load self_defined_tags %}
+
+{% block content %}
+
+    <style>
+        body {
+            background: url({% static 'image/weather.png' %}) !important;
+        }
+
+    </style>
+    <h2 align="center">Hotel Searchs</h2>
+    {% for item in total_list %}
+        {% if forloop.counter0|modulo:3 == 0 %}
+            <div class="row">{% endif %}
+        {% if forloop.counter0|modulo:3 == 0 or forloop.counter0|modulo:3 == 1 or forloop.counter0|modulo:3 == 2 %}
+            <div class="col-md-4">{% endif %}
+        <button type="submit" id="seacrh"
+                class="btn btn-lg btn-primary btn-block my_btn"
+                style="white-space: normal;">
+            {{ item|lookup:"hotel_name" }}<br>{{ item|lookup:"min_price" }}
+            {{ item|lookup:"currency" }}
+        </button></div>
+        {% if forloop.counter0|add:"1"|modulo:3 == 0 %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

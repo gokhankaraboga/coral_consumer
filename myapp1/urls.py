@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^$', auth_views.login, {'template_name': 'login.html'},
         name='login'),
     url(r'^homepage/$', views.homepage, name='homepage'),
-    url(r'^deneme/$', views.deneme, name='deneme'),
+    url(r'^destination_search/$', views.destination_search,
+        name='destination_search'),
 ]

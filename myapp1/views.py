@@ -5,9 +5,6 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from coral_client import Client
 from myapp1.models import Destination, Hotel
-import itertools
-
-# Create your views here.
 
 client_object = Client('gokhan.karaboga', 'Yet123++')
 
@@ -23,7 +20,7 @@ def homepage(request):
 
 
 @login_required
-def deneme(request):
+def destination_search(request):
     if request.method == "POST":
         destinations = request.POST.get("destinations")
         checkin = request.POST.get("checkin")
@@ -41,35 +38,44 @@ def deneme(request):
 
         results = client_object.search(search_params)
         count = results[1]['count']
-        bos_liste, list_price, hotel_name_list, min_price_list = (
-            [], [], [], [])
+
         hotelcode_database_list = Hotel.objects.values_list('coral_code',
                                                             flat=True)
+
+        results_list = []
         debug_counter = 0
         for i in xrange(count):
             if results[1]['results'][i]['hotel_code'] \
                     in hotelcode_database_list:
+                tmp_dict = {
+                    'min_price': float(min([item['list_price'] for item in
+                                            results[1]['results'][i][
+                                                'products']])),
 
-                hotel_name_list.append(Hotel.objects.get(
-                    coral_code=results[1]['results'][i]['hotel_code']).name)
+                    'hotel_code': results[1]['results'][i][
+                        'hotel_code'],
 
-                for item in results[1]['results'][i]['products']:
-                    list_price.append(float(item['list_price']))
+                    'currency': results[1]['results'][i][
+                        'products'][0]['currency'],
 
-                min_price_list.append(min(list_price))
-                list_price = []
+                    'hotel_name': Hotel.objects.get(
+                        coral_code=results[1]['results'][i][
+                            'hotel_code']).name}
+
+                results_list.append(tmp_dict)
 
                 debug_counter += 1
 
-        zipped_list = itertools.izip(hotel_name_list, min_price_list)
-
-        deneme_dict = {'zipped_list': zipped_list}
+        deneme_dict = {'total_list': results_list}
 
         print count, str(debug_counter)
-
-
 
     else:
         print 'Olmadi'
 
-    return render(request, 'deneme.html', deneme_dict)
+    return render(request, 'destination_search.html', deneme_dict)
+
+
+@login_required()
+def single_hotel_search(request):
+    pass
