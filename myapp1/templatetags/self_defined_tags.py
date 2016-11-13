@@ -11,3 +11,7 @@ def lookup(d, key):
 @register.filter
 def modulo(num, val):
     return num % val
+
+@register.filter
+def get_range(val):
+    return xrange(val)

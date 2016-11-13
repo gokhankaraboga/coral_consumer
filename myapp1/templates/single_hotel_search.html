@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}<title xmlns="http://www.w3.org/1999/html"> Hotel Information </title>{% endblock %}
+
+{% load static %}
+
+{% load self_defined_tags %}
+
+{% block content %}
+
+    <style>
+        body {
+            background: url({% static 'image/one_in_million.png' %}) !important;
+        }
+
+    </style>
+    <h2 align="center" style="margin-top: 70px;">{{ hotel_name }}</h2>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <form class="my_form" style="margin-top: 15px;" method="POST"
+            action="{% url 'booking_page' %}">
+            {% csrf_token %}
+                <div class="col-md-4">
+                    {% for item in product_list %}
+                        <button type="submit" id="product_search" name="product_search"
+                        class="btn btn-lg btn-primary btn-block my_btn" value="{{ item|lookup:"product_code" }}"
+                        style="white-space: normal;margin-left: 452px;margin-bottom:40px;width: 100%;">
+                            Room Description: {{ item|lookup:"room_description" }}<br>
+                            Room Category: {{ item|lookup:"room_category" }}<br>
+                            Room+Meal Type: {{ item|lookup:"room_type" }}+{{ item|lookup:"meal_type" }}<br>
+                            Price: {{ item|lookup:"list_price" }} {{ item|lookup:"currency" }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </form>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+
+{% endblock %}

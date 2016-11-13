@@ -13,4 +13,8 @@ urlpatterns = [
     url(r'^homepage/$', views.homepage, name='homepage'),
     url(r'^destination_search/$', views.destination_search,
         name='destination_search'),
+    url(r'^single_hotel_search/$', views.single_hotel_search,
+        name='single_hotel_search'),
+    url(r'^booking_page/$', views.booking_page,
+        name='booking_page'),
 ]

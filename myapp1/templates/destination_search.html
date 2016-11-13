@@ -15,20 +15,27 @@
 
     </style>
     <h2 align="center">Hotel Searchs</h2>
-    {% for item in total_list %}
-        {% if forloop.counter0|modulo:3 == 0 %}
-            <div class="row">{% endif %}
+
+    <form class="my_form" style="margin-top: 15px;" method="POST"
+          action="{% url 'single_hotel_search' %}">
+        {% csrf_token %}
+        {% for item in total_list %}
+            {% if forloop.counter0|modulo:3 == 0 %}
+                <div class="row">{% endif %}
         {% if forloop.counter0|modulo:3 == 0 or forloop.counter0|modulo:3 == 1 or forloop.counter0|modulo:3 == 2 %}
             <div class="col-md-4">{% endif %}
-        <button type="submit" id="seacrh"
-                class="btn btn-lg btn-primary btn-block my_btn"
-                style="white-space: normal;">
-            {{ item|lookup:"hotel_name" }}<br>{{ item|lookup:"min_price" }}
-            {{ item|lookup:"currency" }}
-        </button></div>
+        <div class="span2">
+            <button type="submit" id="hotel_search" name="hotel_search"
+                    class="btn btn-lg btn-primary btn-block my_btn"
+                    style="white-space: normal;margin-left: 94px;"
+                    value="{{ item|lookup:"hotel_code" }}">
+                {{ item|lookup:"hotel_name" }}<br>{{ item|lookup:"min_price" }}
+                {{ item|lookup:"currency" }}
+            </button>
+        </div></div>
         {% if forloop.counter0|add:"1"|modulo:3 == 0 %}
             </div>
         {% endif %}
-    {% endfor %}
-
+        {% endfor %}
+    </form>
 {% endblock %}

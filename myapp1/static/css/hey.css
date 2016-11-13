@@ -6,12 +6,19 @@
     height: 60%;
 }
 
-
 .main_area {
     margin-top: 70px;
     text-align: center;
     font-size: 18px;
     padding: 36px;
+}
+
+.info_area {
+    margin-top: 130px;
+    text-align: center;
+    font-size: 18px;
+    padding: 36px;
+
 }
 
 table {
