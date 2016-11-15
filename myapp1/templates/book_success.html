@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}<title>Book Success Page</title>{% endblock %}
+
+{% load static %}
+
+{% load self_defined_tags %}
+
+{% block content %}
+
+    <style>
+        body {
+            background: url({% static 'image/one_in_million.png' %}) !important;
+        }
+    </style>
+
+    <h2>{{ hotel_code }}</h2>
+    <h2>{{ pax_count }}</h2>
+    <h2>{{ provision_code }}</h2>
+    <h2>{{ list_price }}</h2>
+
+
+{% endblock %}

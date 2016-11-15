@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         try:
             with open(filename) as f:
-                csvread = readCSV = csv.reader(f, delimiter=',')
+                csvread = csv.reader(f, delimiter=',')
 
                 for row in csvread:
                     if row[0] not in copy_class.objects.values_list(

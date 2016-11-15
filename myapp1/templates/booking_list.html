@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}<title xmlns="http://www.w3.org/1999/html"> My Bookings </title>{% endblock %}
+
+{% load static %}
+
+{% load self_defined_tags %}
+
+{% block content %}
+
+    <style>
+        body {
+            background: url({% static 'image/one_in_million.png' %}) !important;
+        }
+    </style>
+
+    {% for item in bookings %}
+        <li>{{ item|lookup:"list_price" }}{{ item|lookup:"currency" }}</li>
+    {% endfor %}
+
+{% endblock %}

@@ -15,6 +15,10 @@ urlpatterns = [
         name='destination_search'),
     url(r'^single_hotel_search/$', views.single_hotel_search,
         name='single_hotel_search'),
-    url(r'^booking_page/$', views.booking_page,
+    url(r'^booking_page/$', views.availability,
         name='booking_page'),
+    url(r'^book_success/$', views.booking,
+        name='book_success'),
+    url(r'^booking_list/$', views.booking_list,
+        name='booking_list'),
 ]

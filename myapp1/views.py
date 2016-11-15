@@ -1,13 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 from coral_client import Client
-from myapp1.models import Destination, Hotel
+from myapp1.models import Booking, Destination, Hotel
 from operator import itemgetter
+import redis, json
+import random, string
 
 client_object = Client('gokhan.karaboga', 'Yet123++')
+
+r = redis.Redis('localhost')
 
 
 @login_required
@@ -85,15 +88,18 @@ def single_hotel_search(request):
     if request.method == "POST":
         hotel_code = request.POST.get("hotel_search")
 
+        """Redis Caching"""
+        r.set('hotel_code', hotel_code)
+        """Redis Caching"""
+
         search_params = request.session["search_params"]
-        # search_params.pop("destination_code")
         search_params["hotel_code"] = str(hotel_code)
 
         hotel_results = client_object.search(search_params)
 
         count = len(hotel_results[1]["results"][0]["products"])
 
-        print "Hotel Count:", count
+        print "Product Count:", count
 
         hotel_name = Hotel.objects.get(coral_code=hotel_code).name
         request.session["hotel_name"] = hotel_name
@@ -125,7 +131,7 @@ def single_hotel_search(request):
 
 
 @login_required
-def booking_page(request):
+def availability(request):
     if request.method == "POST":
         product_code = request.POST.get("product_search")
         hotel_name = request.session["hotel_name"]
@@ -141,5 +147,69 @@ def booking_page(request):
 
         info_tmp[0]["pax"] = int(request.session["search_params"]["pax"])
 
+        """Redis Caching"""
+        r.set('product_code', product_code)
+        json_package = json.dumps(info_tmp[0])
+        r.set('product_info', json_package)
+        """Redis Caching"""
+
     return render(request, 'booking_page.html',
                   {'info_tmp': info_tmp[0], 'hotel_name': hotel_name})
+
+
+def random_key_generator():
+    length = 8
+    characters = string.digits + string.ascii_lowercase + string. \
+        ascii_uppercase
+
+    return ''.join(random.choice(characters) for _ in range(length))
+
+
+@login_required
+def booking(request):
+    if request.method == "POST":
+        provision_code = r.get('product_code')
+        info_dict = json.loads(r.get('product_info'))
+
+        pax_name = [str(request.POST.get('pax_name%s' % i)) for i in
+                    xrange(int(info_dict['pax']))]
+
+        book_param = {
+            'name': ['1,{},{},adult'.format(pax_name[i].split(' ')[0],
+                                            pax_name[i].split(' ')[1]) for i in
+                     xrange(len(pax_name))]}
+
+        info_dict['pax_names'] = pax_name
+        info_dict['pax_count'] = len(pax_name)
+        info_dict['hotel_code'] = r.get('hotel_code')
+        info_dict['provision_code'] = provision_code
+        info_dict['user_id'] = request.user
+        info_dict['booking_code'] = random_key_generator()
+
+        book_code = client_object.provision(provision_code)[1].get('code')
+        info_dict['coral_booking_code'] = book_code
+
+        book_resp = client_object.book(book_code, book_param)
+        info_dict['status'] = book_resp[1]['status']
+
+        del info_dict['pax']
+        del info_dict['product_code']
+
+        if book_resp[0] != 200:
+            return 'Something is wrong here'
+
+        Booking.objects.create(**info_dict)
+
+    return render(request, 'book_success.html', info_dict)
+
+
+@login_required
+def booking_list(request):
+    if request.method == "POST":
+        bookings = list()
+
+        for item in Booking.objects.all():
+            tmp = model_to_dict(item)
+            bookings.append(tmp)
+
+    return render(request, 'booking_list.html', {'bookings': bookings})

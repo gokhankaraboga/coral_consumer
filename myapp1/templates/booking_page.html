@@ -11,31 +11,35 @@
 
     <style>
         body {
-            background: url({% static 'image/one_in_million.png' %}) !important;
+            background: url({% static 'image/seigaiha.png' %}) !important;
         }
     </style>
 
     <div class="container-fluid">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <div class="info_area" style="background-color: rgba(255,255,255,0.5);">
-                <h4 style="display: inline">Hotel Name:</h4>{{ hotel_name }}<br>
-                <h4 style="display: inline">Room Description:</h4>{{ info_tmp|lookup:"room_description" }}<br>
-                <h4 style="display: inline">Room Category:</h4>{{ info_tmp|lookup:"room_category" }}<br>
-                <h4 style="display: inline">Room + Meal Type:</h4>{{ info_tmp|lookup:"room_type" }}+{{ info_tmp|lookup:"meal_type" }}<br>
-                <h4 style="display: inline;">Price:</h4>{{ info_tmp|lookup:"list_price" }} {{ info_tmp|lookup:"currency" }}<br>
-                {% for i in info_tmp|lookup:"pax"|get_range %}
+            <form class="my_form" style="margin-top: 15px;" method="POST"
+                action="{% url 'book_success' %}">
+                {% csrf_token %}
+                <div class="info_area" style="background-color: rgba(255,255,255,0.5);">
+                    <h4 style="display: inline">Hotel Name:</h4>{{ hotel_name }}<br>
+                    <h4 style="display: inline">Room Description:</h4>{{ info_tmp|lookup:"room_description" }}<br>
+                    <h4 style="display: inline">Room Category:</h4>{{ info_tmp|lookup:"room_category" }}<br>
+                    <h4 style="display: inline">Room + Meal Type:</h4>{{ info_tmp|lookup:"room_type" }}+{{ info_tmp|lookup:"meal_type" }}<br>
+                    <h4 style="display: inline;">Price:</h4>{{ info_tmp|lookup:"list_price" }} {{ info_tmp|lookup:"currency" }}<br>
+                    {% for i in info_tmp|lookup:"pax"|get_range %}
+                        <input type="text" name="pax_name{{ forloop.counter0 }}"
+                               placeholder="Pax Name {{ forloop.counter }}" style="width: 80%;margin-top: 20px;"><br>
+                    {% endfor %}
                     <input type="text"
-                           placeholder="Pax Name {{ forloop.counter }}" style="width: 80%;margin-top: 20px;"><br>
-                {% endfor %}
-                <input type="text"
-                           placeholder="Contact Email" style="width: 80%;margin-top: 20px;"><br>
-                <button type="submit" id="book_button" name="book_button"
-                        class="btn btn-lg btn-primary btn-block my_btn"
-                        style="margin-left:70px; "
-                        >Book Now
-                </button>
-            </div>
+                               placeholder="Contact Email" style="width: 80%;margin-top: 20px;"><br>
+                    <button type="submit" id="book_button" name="book_button"
+                            class="btn btn-lg btn-primary btn-block my_btn"
+                            style="margin-left:70px; ">
+                        Book Now
+                    </button>
+                </div>
+            </form>
         </div>
         <div class="col-md-4"></div>
     </div>
