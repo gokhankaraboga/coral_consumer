@@ -32,8 +32,26 @@
 <body style="background: url({% static 'image/holiday.jpg' %}) no-repeat; background-size: cover;">
 
  <div class="row">
-        <div class="col-xs-6 col-md-4"></div>
-        <div class="col-xs-6 col-md-4"></div>
+        <div class="col-xs-6 col-md-4">
+            <form class="my_form" style="margin-top: 15px;margin-left: -47px;" method="POST"
+                   action="{% url 'homepage' %}">
+                 {% csrf_token %}
+                <button type="submit" class="btn btn-lg btn-info my_btn"
+                        name="homepage_button">
+                    Home
+                </button>
+             </form>
+        </div>
+        <div class="col-xs-6 col-md-4">
+            <form class="my_form" style="margin-top: 15px;margin-left: -47px;" method="POST"
+                   action="{% url 'logout' %}">
+                 {% csrf_token %}
+                <button type="submit" class="btn btn-lg btn-info my_btn"
+                        name="logout_button">
+                    Logout
+                </button>
+             </form>
+        </div>
         <div class="col-xs-6 col-md-4">
              <form class="my_form" style="margin-top: 15px;" method="POST"
                    action="{% url 'booking_list' %}">
