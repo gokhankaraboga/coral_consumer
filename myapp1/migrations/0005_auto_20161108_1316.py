@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('myapp1', '0004_auto_20161108_1313'),
     ]
@@ -23,11 +22,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='destination',
             name='coral_code',
-            field=models.CharField(max_length=255, primary_key=True, serialize=False),
+            field=models.CharField(max_length=255, primary_key=True,
+                                   serialize=False),
         ),
         migrations.AlterField(
             model_name='hotel',
             name='coral_code',
-            field=models.CharField(max_length=255, primary_key=True, serialize=False),
+            field=models.CharField(max_length=255, primary_key=True,
+                                   serialize=False),
         ),
     ]

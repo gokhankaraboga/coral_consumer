@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.template import RequestContext
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 from coral_client import Client
