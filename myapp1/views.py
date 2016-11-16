@@ -6,6 +6,7 @@ from coral_client import Client
 from myapp1.models import Booking, Destination, Hotel
 from operator import itemgetter
 from django.conf import settings
+from concurrent.futures import ThreadPoolExecutor
 from django.core.mail import send_mail
 import redis
 import json
@@ -231,7 +232,13 @@ def booking(request):
         html_file = render(request, 'email.html',
                            {'info_dict': info_dict}).content
 
-        sending_mail(request.POST.get("email"), html_file)
+        with ThreadPoolExecutor(max_workers=1) as execute:
+            execute.submit(
+                sending_mail,
+                request.POST.get("email"),
+                html_file
+            )
+            # sending_mail(request.POST.get("email"), html_file)
 
     return render(request, 'book_success.html', {'info_dict': info_dict})
 
