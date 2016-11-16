@@ -23,6 +23,8 @@
                 {% csrf_token %}
                 <div class="info_area" style="background-color: rgba(255,255,255,0.5);">
                     <h4 style="display: inline">Hotel Name:</h4>{{ hotel_name }}<br>
+                    <h4 style="display: inline">Checkin Date:</h4>{{ checkin }}<br>
+                    <h4 style="display: inline">Checkout Date:</h4>{{ checkout }}<br>
                     <h4 style="display: inline">Room Description:</h4>{{ info_tmp|lookup:"room_description" }}<br>
                     <h4 style="display: inline">Room Category:</h4>{{ info_tmp|lookup:"room_category" }}<br>
                     <h4 style="display: inline">Room + Meal Type:</h4>{{ info_tmp|lookup:"room_type" }}+{{ info_tmp|lookup:"meal_type" }}<br>
@@ -32,7 +34,7 @@
                                placeholder="Pax Name {{ forloop.counter }}" style="width: 80%;margin-top: 20px;"><br>
                     {% endfor %}
                     <input type="text"
-                               placeholder="Contact Email" style="width: 80%;margin-top: 20px;"><br>
+                               placeholder="Contact Email" name="email" style="width: 80%;margin-top: 20px;"><br>
                     <button type="submit" id="book_button" name="book_button"
                             class="btn btn-lg btn-primary btn-block my_btn"
                             style="margin-left:70px; ">

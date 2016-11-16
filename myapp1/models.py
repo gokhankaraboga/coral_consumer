@@ -16,7 +16,10 @@ class Destination(models.Model):
 class Booking(models.Model):
     user_id = models.ForeignKey(auth_models.User)
     provision_code = models.CharField(max_length=255)
+    hotel_name = models.CharField(max_length=255, null=True)
     hotel_code = models.CharField(max_length=255)
+    checkin = models.CharField(max_length=255, null=True)
+    checkout = models.CharField(max_length=255, null=True)
     booking_code = models.CharField(max_length=255)
     coral_booking_code = models.CharField(max_length=255)
     room_type = models.CharField(max_length=255)

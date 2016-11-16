@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}<title>Email Page</title>{% endblock %}
+
+{% load static %}
+
+{% load self_defined_tags %}
+
+{% block content %}
+
+    <style>
+        body {
+            background: url({% static 'image/seigaiha.png' %}) !important;
+        }
+
+        .my_btn {
+            display: none !important;
+        }
+
+    </style>
+
+       <div class="container-fluid">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="info_area" style="background-color: rgba(255,255,255,0.5);">
+                <h4 align="center">Your Booking has been successfully completed!</h4><br>
+                <h4 style="display: inline">Hotel Name:</h4>{{ info_dict|lookup:"hotel_name" }}<br>
+                <h4 style="display: inline">Checkin Date:</h4>{{ info_dict|lookup:"checkin" }}<br>
+                <h4 style="display: inline">Checkout Date:</h4>{{ info_dict|lookup:"checkout" }}<br>
+                <h4 style="display: inline">Room Description:</h4>{{ info_dict|lookup:"room_description" }}<br>
+                <h4 style="display: inline">Room Category:</h4>{{ info_dict|lookup:"room_category" }}<br>
+                <h4 style="display: inline">Room + Meal Type:</h4>{{ info_dict|lookup:"room_type" }}+{{ info_dict|lookup:"meal_type" }}<br>
+                <h4 style="display: inline;">Price:</h4>{{ info_dict|lookup:"list_price" }} {{ info_dict|lookup:"currency" }}<br><br>
+                {% for name in info_dict|lookup:"pax_names" %}
+                    <h4 style="display: inline">Pax Name{{ forloop.counter }}:</h4> {{ name }}<br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+{% endblock %}

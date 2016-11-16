@@ -124,3 +124,11 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'homepage'
 
 SESSION_COOKIE_AGE = 3600
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'metglobaltest@gmail.com'
+EMAIL_HOST_PASSWORD = 'metglobal'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'user@domain.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

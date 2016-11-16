@@ -10,12 +10,57 @@
 
     <style>
         body {
-            background: url({% static 'image/one_in_million.png' %}) !important;
+            background: url({% static 'image/seigaiha.png' %}) !important;
+        }
+
+        table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 5%;
+        margin-bottom: 5%;
+
+        }
+
+    td, th {
+        border: 3px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+
+        }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
         }
     </style>
 
-    {% for item in bookings %}
-        <li>{{ item|lookup:"list_price" }}{{ item|lookup:"currency" }}</li>
-    {% endfor %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <table>
+              <tr>
+                <th>Pax Names</th>
+                <th>Hotel Name</th>
+                <th>Checkin Date</th>
+                <th>Checkout Date</th>
+                <th>Room Description</th>
+                <th>Price</th>
+              </tr>
+                {% for item in bookings %}
+                    <tr>
+                        <td>{{ item|lookup:"pax_names"|string_formatting}}</td>
+                        <td>{{ item|lookup:"hotel_name" }}</td>
+                        <td>{{ item|lookup:"checkin" }}</td>
+                        <td>{{ item|lookup:"checkout" }}</td>
+                        <td>{{ item|lookup:"room_description" }}</td>
+                        <td>{{ item|lookup:"list_price" }} {{ item|lookup:"currency" }}</td>
+                    </tr>
+
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
 
 {% endblock %}

@@ -5,8 +5,12 @@ from django.contrib.auth.decorators import login_required
 from coral_client import Client
 from myapp1.models import Booking, Destination, Hotel
 from operator import itemgetter
-import redis, json
-import random, string
+from django.conf import settings
+from django.core.mail import send_mail
+import redis
+import json
+import random
+import string
 
 client_object = Client('gokhan.karaboga', 'Yet123++')
 
@@ -15,12 +19,11 @@ r = redis.Redis('localhost')
 
 @login_required
 def homepage(request):
-    if request.method == "GET":
+    if request.method == "GET" or request.method == "POST":
         destination_name_list = Destination.objects.values_list('name',
                                                                 flat=True)
-
-    return render(request, 'homepage.html',
-                  {'destination': destination_name_list})
+        return render(request, 'homepage.html',
+                      {'destination': destination_name_list})
 
 
 @login_required
@@ -30,6 +33,11 @@ def destination_search(request):
         checkin = request.POST.get("checkin")
         checkout = request.POST.get("checkout")
         pax = request.POST.get('pax')
+
+        """Redis Caching"""
+        r.set('checkin', checkin)
+        r.set('checkout', checkout)
+        """Redis Caching"""
 
         destination_code = str(Destination.objects.get(
             name=destinations).coral_code)
@@ -54,9 +62,9 @@ def destination_search(request):
             if results[1]['results'][i]['hotel_code'] \
                     in hotelcode_database_list:
                 tmp_dict = {
-                    'min_price': float(min([item['list_price'] for item in
-                                            results[1]['results'][i][
-                                                'products']])),
+                    'min_price': min([float(item['list_price']) for item in
+                                      results[1]['results'][i][
+                                          'products']]),
 
                     'hotel_code': results[1]['results'][i][
                         'hotel_code'],
@@ -154,7 +162,8 @@ def availability(request):
         """Redis Caching"""
 
     return render(request, 'booking_page.html',
-                  {'info_tmp': info_tmp[0], 'hotel_name': hotel_name})
+                  {'info_tmp': info_tmp[0], 'hotel_name': hotel_name,
+                   'checkin': r.get('checkin'), 'checkout': r.get('checkout')})
 
 
 def random_key_generator():
@@ -163,6 +172,17 @@ def random_key_generator():
         ascii_uppercase
 
     return ''.join(random.choice(characters) for _ in range(length))
+
+
+def sending_mail(recipient, message):
+    send_mail(
+        'Booking Confirmation',
+        'Your Booking has been successfully completed!',
+        settings.EMAIL_HOST_USER,
+        [recipient],
+        fail_silently=False,
+        html_message=message,
+    )
 
 
 @login_required
@@ -179,28 +199,41 @@ def booking(request):
                                             pax_name[i].split(' ')[1]) for i in
                      xrange(len(pax_name))]}
 
-        info_dict['pax_names'] = pax_name
-        info_dict['pax_count'] = len(pax_name)
-        info_dict['hotel_code'] = r.get('hotel_code')
-        info_dict['provision_code'] = provision_code
-        info_dict['user_id'] = request.user
-        info_dict['booking_code'] = random_key_generator()
-
         book_code = client_object.provision(provision_code)[1].get('code')
-        info_dict['coral_booking_code'] = book_code
-
         book_resp = client_object.book(book_code, book_param)
-        info_dict['status'] = book_resp[1]['status']
-
-        del info_dict['pax']
-        del info_dict['product_code']
 
         if book_resp[0] != 200:
             return 'Something is wrong here'
 
+        info_dict.update({
+            'pax_names': pax_name,
+            'pax_count': len(pax_name),
+            'hotel_name': request.session['hotel_name'],
+            'checkin': r.get('checkin'),
+            'checkout': r.get('checkout'),
+            'hotel_code': r.get('hotel_code'),
+            'provision_code': provision_code,
+            'user_id': request.user,
+            'booking_code': random_key_generator(),
+            'coral_booking_code': book_code,
+            'status': book_resp[1]['status']
+        })
+
+        del info_dict['pax']
+        del info_dict['product_code']
+
+        if Booking.objects.filter(
+                provision_code=info_dict['provision_code']).exists():
+            return 'Duplicate Error!'
+
         Booking.objects.create(**info_dict)
 
-    return render(request, 'book_success.html', info_dict)
+        html_file = render(request, 'email.html',
+                           {'info_dict': info_dict}).content
+
+        sending_mail(request.POST.get("email"), html_file)
+
+    return render(request, 'book_success.html', {'info_dict': info_dict})
 
 
 @login_required
