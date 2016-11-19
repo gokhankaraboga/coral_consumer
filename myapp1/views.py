@@ -8,6 +8,7 @@ from django.conf import settings
 from concurrent.futures import ThreadPoolExecutor
 from django.core.mail import send_mail
 import redis
+import hashlib
 import json
 import random
 import string
@@ -34,10 +35,10 @@ def destination_search(request):
         checkout = request.POST.get("checkout")
         pax = request.POST.get('pax')
 
-        """Redis Caching"""
-        r.set('checkin', checkin)
-        r.set('checkout', checkout)
-        """Redis Caching"""
+        """Request Session Variables"""
+        request.session['checkin'] = checkin
+        request.session['checkout'] = checkout
+        """Request Session Variables"""
 
         destination_code = str(Destination.objects.get(
             name=destinations).coral_code)
@@ -50,7 +51,7 @@ def destination_search(request):
 
         request.session['search_params'] = search_params
 
-        results = client_object.search(search_params)
+        results = cache_search(search_params)
         count = results[1]['count']
 
         hotelcode_database_list = Hotel.objects.values_list('coral_code',
@@ -96,9 +97,9 @@ def single_hotel_search(request):
     if request.method == "POST":
         hotel_code = request.POST.get("hotel_search")
 
-        """Redis Caching"""
-        r.set('hotel_code', hotel_code)
-        """Redis Caching"""
+        """Request Session Variables"""
+        request.session['hotel_code'] = hotel_code
+        """Request Session Variables"""
 
         search_params = request.session["search_params"]
         search_params["hotel_code"] = str(hotel_code)
@@ -145,7 +146,7 @@ def availability(request):
         hotel_name = request.session["hotel_name"]
         product_list = request.session['product_list']
 
-        response = client_object.availability(product_code)
+        response = cache_availability(product_code)
 
         if response[0] != 200:
             return 'Something is wrong here'
@@ -155,41 +156,22 @@ def availability(request):
 
         info_tmp[0]["pax"] = int(request.session["search_params"]["pax"])
 
-        """Redis Caching"""
-        r.set('product_code', product_code)
-        json_package = json.dumps(info_tmp[0])
-        r.set('product_info', json_package)
-        """Redis Caching"""
+        """Request Session Variables"""
+        request.session['product_code'] = product_code
+        request.session['product_info'] = info_tmp[0]
+        """Request Session Variables"""
 
     return render(request, 'booking_page.html',
                   {'info_tmp': info_tmp[0], 'hotel_name': hotel_name,
-                   'checkin': r.get('checkin'), 'checkout': r.get('checkout')})
-
-
-def random_key_generator():
-    length = 8
-    characters = string.digits + string.ascii_lowercase + string. \
-        ascii_uppercase
-
-    return ''.join(random.choice(characters) for _ in range(length))
-
-
-def sending_mail(recipient, message):
-    send_mail(
-        'Booking Confirmation',
-        'Your Booking has been successfully completed!',
-        settings.EMAIL_HOST_USER,
-        [recipient],
-        fail_silently=False,
-        html_message=message,
-    )
+                   'checkin': request.session['checkin'],
+                   'checkout': request.session['checkout']})
 
 
 @login_required
 def booking(request):
     if request.method == "POST":
-        provision_code = r.get('product_code')
-        info_dict = json.loads(r.get('product_info'))
+        provision_code = request.session['product_code']
+        info_dict = request.session['product_info']
 
         pax_name = [str(request.POST.get('pax_name%s' % i)) for i in
                     xrange(int(info_dict['pax']))]
@@ -209,9 +191,9 @@ def booking(request):
             'pax_names': pax_name,
             'pax_count': len(pax_name),
             'hotel_name': request.session['hotel_name'],
-            'checkin': r.get('checkin'),
-            'checkout': r.get('checkout'),
-            'hotel_code': r.get('hotel_code'),
+            'checkin': request.session['checkin'],
+            'checkout': request.session['checkout'],
+            'hotel_code': request.session['hotel_code'],
             'provision_code': provision_code,
             'user_id': request.user,
             'booking_code': random_key_generator(),
@@ -252,3 +234,52 @@ def booking_list(request):
             bookings.append(tmp)
 
     return render(request, 'booking_list.html', {'bookings': bookings})
+
+
+def random_key_generator():
+    length = 8
+    characters = string.digits + string.ascii_lowercase + string. \
+        ascii_uppercase
+
+    return ''.join(random.choice(characters) for _ in range(length))
+
+
+def sending_mail(recipient, message):
+    send_mail(
+        'Booking Confirmation',
+        'Your Booking has been successfully completed!',
+        settings.EMAIL_HOST_USER,
+        [recipient],
+        fail_silently=False,
+        html_message=message,
+    )
+
+
+def cache_availability(product_code):
+    response = r.get(product_code)
+
+    if response:
+        return json.loads(response)
+    else:
+        response = client_object.availability(product_code)
+        r.set(product_code, json.dumps(response),
+              ex=3600)
+
+    return response
+
+
+def cache_search(search_params):
+    hash_var = hashlib.md5(
+        json.dumps(search_params, sort_keys=True)
+    ).hexdigest()
+
+    results = r.get(hash_var)
+
+    if results:
+        return json.loads(results)
+    else:
+        results = client_object.search(search_params)
+        r.set(hash_var, json.dumps(results),
+              ex=3600)
+
+    return results
